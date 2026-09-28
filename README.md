@@ -2,7 +2,7 @@
 
 # ⚡ samp-rakdriver
 
-**Production-grade, asynchronous, headless SA-MP 0.3.7-R1 RakNet network engine written in modern C++17.**
+**Production-grade, asynchronous, headless SA-MP 0.3.7 RakNet network engine written in modern C++17.**
 
 [![C++17](https://img.shields.io/badge/Language-C%2B%2B17-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)](https://en.cppreference.com/w/cpp/17)
 [![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20Windows-000000?style=for-the-badge&logo=linux&logoColor=white)](https://cmake.org)
@@ -26,7 +26,7 @@
 
 ## 📌 Overview
 
-**samp-rakdriver** — это лёгкий headless C++17 network engine для работы с сетевым протоколом **SA-MP 0.3.7-R1** на уровне RakNet.
+**samp-rakdriver** — это лёгкий headless C++17 network engine для работы с сетевым протоколом **SA-MP 0.3.7** на уровне RakNet.
 
 Проект позволяет работать с SA-MP без запуска полноценного клиента GTA: San Andreas. Вместо графического движка, RenderWare и DirectX 9 используется собственный сетевой слой, который напрямую взаимодействует с UDP/RakNet и реализует необходимые части SA-MP protocol stack.
 
