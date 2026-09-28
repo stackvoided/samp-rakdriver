@@ -322,7 +322,7 @@ SA-MP Server
 Клонирование проекта:
 
 ```bash
-git clone https://github.com/your-username/samp-rakdriver.git
+git clone https://github.com/stackvoided/samp-rakdriver.git
 cd samp-rakdriver/cpp
 ```
 
@@ -555,7 +555,7 @@ README предполагает, что основной C++ проект нах
 
 # 📜 License
 
-This project is licensed under the **MIT License**.
+This project is licensed under the **Apache License 2.0**.
 
 Подробности находятся в файле [`LICENSE`](LICENSE).
 
