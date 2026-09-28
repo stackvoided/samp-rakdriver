@@ -26,91 +26,91 @@
 
 ## 📌 Overview
 
-**samp-rakdriver** — это лёгкий headless C++17 network engine для работы с сетевым протоколом **SA-MP 0.3.7** на уровне RakNet.
+**samp-rakdriver** — is a lightweight headless C++17 network engine for working with the **SA-MP 0.3.7** at the RakNet level.
 
-Проект позволяет работать с SA-MP без запуска полноценного клиента GTA: San Andreas. Вместо графического движка, RenderWare и DirectX 9 используется собственный сетевой слой, который напрямую взаимодействует с UDP/RakNet и реализует необходимые части SA-MP protocol stack.
+The project allows working with SA-MP without launching the full GTA: San Andreas client. Instead of the graphics engine, RenderWare, and DirectX 9, it uses its own network layer that communicates directly with UDP/RakNet and implements the required parts of the SA-MP protocol stack.
 
-Такой подход делает проект подходящим для:
+This approach makes the project suitable for:
 
-- низкоуровневого исследования SA-MP/RakNet;
-- создания автономных headless-клиентов;
-- автоматизации сетевых сценариев;
-- тестирования серверной логики;
-- работы с RPC и бинарными пакетами;
-- экспериментов с синхронизацией игроков;
-- многопоточной инфраструктуры с несколькими клиентскими экземплярами.
+- low-level SA-MP/RakNet research;
+- building standalone headless clients;
+- network scenario automation;
+- server-side logic testing;
+- working with RPCs and binary packets;
+- experiments with player synchronization;
+- multi-threaded infrastructure with multiple client instances.
 
-Проект ориентирован на минимальный runtime footprint и разделение транспортного уровня, протокольной логики и прикладного состояния.
+The project is focused on a minimal runtime footprint and separation of the transport layer, protocol logic, and application state.
 
-> **Примечание:** README описывает архитектуру и возможности проекта согласно предоставленной спецификации. Конкретное поведение отдельных серверов может зависеть от их реализации и настроек.
+> **Note:** This README describes the project's architecture and capabilities according to the provided specification. The behavior of individual servers may depend on their implementation and configuration.
 
 ---
 
 ## ✨ Key Features
 
-### ⚡ Асинхронный сетевой цикл
+### ⚡ Asynchronous Network Loop
 
-Сетевой слой построен вокруг неблокирующего UDP socket abstraction:
+The network layer is built around a non-blocking UDP socket abstraction:
 
-- BSD sockets на Linux;
-- Winsock на Windows;
-- отдельный low-latency I/O worker;
-- асинхронная обработка входящих и исходящих данных;
-- отсутствие необходимости запускать графический клиент GTA:SA.
+- BSD sockets on Linux;
+- Winsock on Windows;
+- a dedicated low-latency I/O worker;
+- asynchronous processing of incoming and outgoing data;
+- no need to launch the graphical GTA:SA client.
 
-### 📦 BitStream binary serialization
+### 📦 BitStream Binary Serialization
 
-Встроенный `BitStream` предназначен для точной бинарной сериализации:
+The built-in `BitStream` is designed for precise binary serialization:
 
-- запись данных на уровне байтов и битов;
-- чтение произвольных bit-length последовательностей;
-- динамическое расширение буфера;
-- контроль границ потока;
-- подготовка бинарных payload'ов, совместимых с серверным форматом.
+- writing data at the byte and bit level;
+- reading arbitrary bit-length sequences;
+- dynamic buffer expansion;
+- stream bounds checking;
+- preparing binary payloads compatible with the server format.
 
-Это особенно важно для RakNet/SA-MP, где структура пакета и точное расположение полей имеют значение.
+This is especially important for RakNet/SA-MP, where packet structure and exact field placement matter.
 
 ### 🌐 Cross-platform
 
-Проект рассчитан на сборку под:
+The project is designed to build on:
 
 - Linux + GCC;
 - Linux + Clang;
 - Windows + MSVC;
-- Windows через MinGW-w64;
-- CMake как единая система конфигурации.
+- Windows via MinGW-w64;
+- CMake as the unified configuration system.
 
-### 💬 RPC и Dialog subsystem
+### 💬 RPC and Dialog Subsystem
 
-В прикладном слое присутствует обработка SA-MP RPC:
+The application layer includes SA-MP RPC handling:
 
-- диспетчеризация RPC;
-- обработка `ShowDialog`;
-- разбор строковых payload'ов;
-- построение ответов;
-- работа с бинарными структурами протокола.
+- RPC dispatching;
+- handling `ShowDialog`;
+- parsing string payloads;
+- building responses;
+- working with binary protocol structures.
 
-### 🏃 Player synchronization
+### 🏃 Player Synchronization
 
-Реализован генератор OnFoot synchronization frames.
+An OnFoot synchronization frame generator is implemented.
 
-Система формирует raw synchronization packets с заданным интервалом, в исходной спецификации — примерно **10 Hz**.
+The system generates raw synchronization packets at a configured interval, approximately **10 Hz** in the original specification.
 
-### 🔐 Authentication / handshake
+### 🔐 Authentication / Handshake
 
-Сетевой слой содержит необходимые механизмы для SA-MP handshake:
+The network layer contains the mechanisms required for the SA-MP handshake:
 
 - challenge-response flow;
-- преобразование AuthKey;
+- AuthKey transformation;
 - CRC32;
-- генерацию Version 4057 handshake;
+- generation of the Version 4057 handshake;
 - ClientJoin payload.
 
 ---
 
 # 🏗 Architecture
 
-Архитектура проекта построена по принципу разделения ответственности: низкоуровневый transport layer не смешивается с SA-MP state machine и прикладной логикой.
+The project architecture follows separation of concerns: the low-level transport layer is kept separate from the SA-MP state machine and application logic.
 
 ```text
 cpp/
@@ -145,50 +145,50 @@ cpp/
     └── ...
 ```
 
-## 🧩 Основные модули
+## 🧩 Core Modules
 
-| Модуль | Назначение |
+| Module | Purpose |
 |---|---|
-| `core/` | Runtime context, конфигурация и orchestration потоков |
-| `net/` | UDP/RakNet transport и бинарная сериализация |
-| `samp/` | SA-MP protocol logic, RPC, dialogs и sync |
-| `utils/` | Вспомогательная математика и криптографические операции |
+| `core/` | Runtime context, configuration, and thread orchestration |
+| `net/` | UDP/RakNet transport and binary serialization |
+| `samp/` | SA-MP protocol logic, RPCs, dialogs, and synchronization |
+| `utils/` | Utility mathematics and cryptographic operations |
 
 ### `core/`
 
-Содержит управляющий слой приложения.
+Contains the application control layer.
 
-- `Application.h` — основной execution loop и управление состояниями.
-- `Config.h` — CLI flags и runtime configuration.
-- `Logger.h` — потокобезопасный цветной console logger.
+- `Application.h` — main execution loop and state management.
+- `Config.h` — CLI flags and runtime configuration.
+- `Logger.h` — thread-safe colored console logger.
 
 ### `net/`
 
-Низкоуровневый сетевой слой.
+Low-level network layer.
 
 - `Socket.h` — cross-platform non-blocking UDP wrapper.
-- `RakClient.h` — управление RakNet connection state и dispatch.
+- `RakClient.h` — RakNet connection state and dispatch management.
 - `BitStream.h` — binary reader/writer.
-- `NetworkTypes.h` — network address и packet abstractions.
-- `PacketEnumerations.h` — packet IDs и priority/reliability definitions.
+- `NetworkTypes.h` — network address and packet abstractions.
+- `PacketEnumerations.h` — packet IDs and priority/reliability definitions.
 
 ### `samp/`
 
 SA-MP domain layer.
 
-- `DialogManager.h` — обработка входящих dialog payloads.
+- `DialogManager.h` — handling incoming dialog payloads.
 - `RPCManager.h` — RPC dispatch matrix.
-- `PlayerPed.h` — локальное состояние игрока.
-- `SAMPPacket.h` — конструкторы handshake-пакетов.
-- `SyncStructures.h` — OnFoot/Vehicle sync structures.
-- `SAMPDefines.h` — версии NetGame и RPC ID mappings.
+- `PlayerPed.h` — local player state.
+- `SAMPPacket.h` — handshake packet builders.
+- `SyncStructures.h` — OnFoot/Vehicle synchronization structures.
+- `SAMPDefines.h` — NetGame versions and RPC ID mappings.
 
 ### `utils/`
 
-Вспомогательные алгоритмы.
+Utility algorithms.
 
-- `Crypto.h` — AuthKey XOR transformation и CRC32.
-- `Vector3.h` — 3D coordinates и vector operations.
+- `Crypto.h` — AuthKey XOR transformation and CRC32.
+- `Vector3.h` — 3D coordinates and vector operations.
 
 ---
 
@@ -196,7 +196,7 @@ SA-MP domain layer.
 
 ## 🤝 Handshake Sequence
 
-`Samp-rakdriver` реализует последовательность подключения, соответствующую SA-MP 0.3.7-R1 в описанной спецификации.
+`samp-rakdriver` implements the connection sequence corresponding to SA-MP 0.3.7-R1 in the described specification.
 
 ```text
 Client (samp-rakdriver)                  Server
@@ -219,24 +219,24 @@ Client (samp-rakdriver)                  Server
         |                                   |
 ```
 
-Последовательность можно концептуально разделить на следующие стадии:
+The sequence can be conceptually divided into the following stages:
 
 1. **RakNet connection request**
 2. **Connection acceptance**
 3. **SA-MP ClientJoin**
 4. **Authentication / AuthKey**
-5. **Server initialization через `RPC_InitGame`**
-6. **Обработка optional dialog**
-7. **Отправка player synchronization**
-8. **Продолжение сетевого цикла**
+5. **Server initialization via `RPC_InitGame`**
+6. **Optional dialog handling**
+7. **Sending player synchronization**
+8. **Continuing the network loop**
 
 ---
 
 # 📦 Binary Serialization
 
-Все важные outgoing payload structures используют packed layouts, чтобы бинарное представление соответствовало ожидаемому сервером формату.
+All important outgoing payload structures use packed layouts so that the binary representation matches the format expected by the server.
 
-Пример отправки OnFoot synchronization frame:
+Example of sending an OnFoot synchronization frame:
 
 ```cpp
 BitStream bs;
@@ -255,29 +255,29 @@ m_client->Send(
 );
 ```
 
-### Почему BitStream важен?
+### Why is BitStream Important?
 
-Обычная сериализация C++-структуры не всегда подходит для сетевого протокола. В SA-MP/RakNet критичны:
+Ordinary C++ structure serialization is not always suitable for a network protocol. In SA-MP/RakNet, the following are critical:
 
-- точный порядок полей;
-- размер каждого поля;
+- exact field order;
+- size of each field;
 - alignment;
-- количество передаваемых бит;
-- порядок байтов;
-- тип reliability/priority;
-- структура packet header.
+- number of transmitted bits;
+- byte order;
+- reliability/priority type;
+- packet header structure.
 
-Поэтому `BitStream` выступает промежуточным уровнем между C++ structures и фактическим UDP payload.
+Therefore, `BitStream` serves as the intermediate layer between C++ structures and the actual UDP payload.
 
 ---
 
 # 🧱 Synchronization
 
-Для OnFoot synchronization используется отдельная структура состояния игрока.
+A separate player state structure is used for OnFoot synchronization.
 
-Поток синхронизации формирует пакет примерно **10 раз в секунду**, то есть с интервалом порядка 100 мс.
+The synchronization loop generates a packet approximately **10 times per second**, i.e. at an interval of about 100 ms.
 
-Типичный цикл выглядит следующим образом:
+A typical cycle looks as follows:
 
 ```text
 Player State
@@ -298,7 +298,7 @@ UDP socket
 SA-MP Server
 ```
 
-В исходной спецификации размер raw OnFoot synchronization frame указан как **68 bytes**.
+The original specification states that the raw OnFoot synchronization frame size is **68 bytes**.
 
 ---
 
@@ -319,39 +319,39 @@ SA-MP Server
 
 ## 🐧 Linux
 
-Клонирование проекта:
+Clone the project:
 
 ```bash
 git clone https://github.com/stackvoided/samp-rakdriver.git
 cd samp-rakdriver/cpp
 ```
 
-Создание отдельного build directory:
+Create a separate build directory:
 
 ```bash
 mkdir build
 cd build
 ```
 
-Конфигурация Release build:
+Configure the Release build:
 
 ```bash
 cmake -DCMAKE_BUILD_TYPE=Release ..
 ```
 
-Компиляция:
+Compile:
 
 ```bash
 make -j$(nproc)
 ```
 
-После успешной сборки executable `rakbot` будет находиться в `build/`.
+After a successful build, the `rakbot` executable will be located in `build/`.
 
 ---
 
-## 🪟 Windows через MinGW-w64
+## 🪟 Windows via MinGW-w64
 
-Установите `mingw-w64`, затем:
+Install `mingw-w64`, then:
 
 ```bash
 cd cpp
@@ -359,7 +359,7 @@ mkdir build_win
 cd build_win
 ```
 
-Настройте CMake под Windows target:
+Configure CMake for the Windows target:
 
 ```bash
 cmake \
@@ -369,13 +369,13 @@ cmake \
   ..
 ```
 
-Соберите проект:
+Build the project:
 
 ```bash
 make -j$(nproc)
 ```
 
-В результате будет создан:
+The result will be:
 
 ```text
 rakbot.exe
@@ -385,7 +385,7 @@ rakbot.exe
 
 ## 🪟 Native Windows / Visual Studio
 
-Откройте **Developer Command Prompt for Visual Studio**:
+Open the **Developer Command Prompt for Visual Studio**:
 
 ```dos
 cd cpp
@@ -393,13 +393,13 @@ mkdir build
 cd build
 ```
 
-Сгенерируйте Makefiles:
+Generate Makefiles:
 
 ```dos
 cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 ```
 
-Соберите проект:
+Build the project:
 
 ```dos
 nmake
@@ -409,7 +409,7 @@ nmake
 
 # 💻 Usage
 
-После сборки приложение запускается с параметрами целевого SA-MP сервера:
+After building, the application is launched with the target SA-MP server parameters:
 
 ```bash
 ./rakbot <IPv4_Address> <Port> <Nickname>
@@ -417,7 +417,7 @@ nmake
 
 ### Example
 
-Подключение к локальному серверу на стандартном порту:
+Connect to a local server on the default port:
 
 ```bash
 ./rakbot 127.0.0.1 7777 Driver_Node
@@ -427,17 +427,17 @@ nmake
 
 | Argument | Type | Default | Description |
 |---|---|---|---|
-| `argv[1]` | `std::string` | `127.0.0.1` | IPv4-адрес SA-MP сервера |
-| `argv[2]` | `uint16_t` | `7777` | UDP port сервера |
+| `argv[1]` | `std::string` | `127.0.0.1` | IPv4 address of the SA-MP server |
+| `argv[2]` | `uint16_t` | `7777` | Server UDP port |
 | `argv[3]` | `std::string` | `RakBot` | Nickname / account identity |
 
-Nickname передаётся в `ClientJoin` payload как идентификатор клиента.
+The nickname is passed in the `ClientJoin` payload as the client identifier.
 
 ---
 
 # 🔄 Runtime Flow
 
-Упрощённая модель работы приложения:
+Simplified application workflow:
 
 ```text
                     ┌─────────────────────┐
@@ -472,13 +472,13 @@ Nickname передаётся в `ClientJoin` payload как идентифик�
  Dialog Response
 ```
 
-Такое разделение позволяет изолировать transport concerns от SA-MP-specific logic и облегчает расширение проекта.
+This separation isolates transport concerns from SA-MP-specific logic and makes the project easier to extend.
 
 ---
 
 # 📊 Performance
 
-Согласно предоставленной спецификации проекта:
+According to the provided project specification:
 
 | Metric | Value |
 |---|---:|
@@ -487,33 +487,33 @@ Nickname передаётся в `ClientJoin` payload как идентифик�
 | Network I/O | ~1.2 KB/s during active sync |
 | Sync frequency | ~10 Hz |
 
-Фактические значения зависят от ОС, компилятора, настроек оптимизации, количества клиентов и конкретного сетевого сценария.
+Actual values depend on the OS, compiler, optimization settings, number of clients, and the specific network scenario.
 
 ---
 
 # 🛡 Design Goals
 
-Проект ориентирован на несколько ключевых принципов:
+The project is focused on several key principles:
 
-### Low-level control
+### Low-level Control
 
-Минимум абстракций между приложением и сетевым протоколом позволяет исследовать и контролировать бинарные packets непосредственно.
+A minimum of abstractions between the application and the network protocol makes it possible to directly inspect and control binary packets.
 
-### Low overhead
+### Low Overhead
 
-Отсутствие полноценного GTA:SA runtime позволяет существенно уменьшить потребление ресурсов по сравнению с запуском обычного игрового клиента.
+The absence of the full GTA:SA runtime significantly reduces resource consumption compared with running the standard game client.
 
 ### Modularity
 
-Transport, serialization, SA-MP logic и utilities разделены по отдельным модулям.
+Transport, serialization, SA-MP logic, and utilities are separated into individual modules.
 
 ### Portability
 
-CMake и platform-specific socket abstraction позволяют использовать одну кодовую базу на Linux и Windows.
+CMake and platform-specific socket abstractions allow the same codebase to be used on Linux and Windows.
 
 ### Extensibility
 
-RPC manager, dialog subsystem и synchronization structures позволяют добавлять новые protocol handlers без изменения базового socket layer.
+The RPC manager, dialog subsystem, and synchronization structures allow new protocol handlers to be added without changing the base socket layer.
 
 ---
 
@@ -535,7 +535,7 @@ RPC manager, dialog subsystem и synchronization structures позволяют �
 
 # 📁 Recommended Repository Layout
 
-Для GitHub репозитория рекомендуется сохранить следующую структуру:
+For a GitHub repository, it is recommended to keep the following structure:
 
 ```text
 samp-rakdriver/
@@ -549,7 +549,7 @@ samp-rakdriver/
 └── .gitignore
 ```
 
-README предполагает, что основной C++ проект находится внутри директории `cpp/`.
+The README assumes that the main C++ project is located inside the `cpp/` directory.
 
 ---
 
@@ -557,7 +557,7 @@ README предполагает, что основной C++ проект нах
 
 This project is licensed under the **Apache License 2.0**.
 
-Подробности находятся в файле [`LICENSE`](LICENSE).
+Details are available in the [`LICENSE`](LICENSE) file.
 
 ---
 
